@@ -9,11 +9,14 @@ const pool = new Pool({
     database: process.env.DB_NAME,
     ssl: {
         rejectUnauthorized: false
-    }
+    },
+    max: 10,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 10000
 });
 
-pool.connect()
-    .then(() => console.log("✅ PostgreSQL Connected Successfully"))
-    .catch((err) => console.error("❌ Database Connection Error:", err));
+pool.on("error", (err) => {
+    console.error("❌ Unexpected PostgreSQL pool error:", err);
+});
 
 module.exports = pool;
